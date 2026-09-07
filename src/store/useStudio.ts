@@ -225,7 +225,6 @@ export const useStudio = create<StudioState>((set, get) => ({
       if (!page) return;
       page.objects.push({
         id,
-        type: obj.type,
         name: obj.name ?? (obj.type === "text" ? "Text" : "Object"),
         x: obj.x ?? 10,
         y: obj.y ?? 10,

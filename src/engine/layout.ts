@@ -9,8 +9,8 @@ export interface ImpositionInput {
   marginLeft: number;
   horizontalGap: number;
   verticalGap: number;
-  allowRotation?: boolean;
-  quantity?: number;
+  allowRotation?: boolean | undefined;
+  quantity?: number | undefined;
 }
 
 export interface Placement {

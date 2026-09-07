@@ -40,7 +40,7 @@ export interface PlacedObject {
   id: string;
   type: "image" | "text" | "rect";
   name: string;
-  assetId?: string;
+  assetId?: string | undefined;
   /** mm, relative to top-left of trim page */
   x: number;
   y: number;
@@ -50,9 +50,9 @@ export interface PlacedObject {
   locked: boolean;
   visible: boolean;
   fit: FitMode;
-  text?: string;
-  fontSize?: number;
-  color?: string;
+  text?: string | undefined;
+  fontSize?: number | undefined;
+  color?: string | undefined;
 }
 
 export interface Page {
