@@ -1,4 +1,4 @@
-import type { ImageAsset, Project, Template } from "@/types/project";
+import type { ImageAsset, Project, Template, PrintProfile } from "@/types/project";
 
 const DB_NAME = "print-layout-studio";
 const STORE = "projects";
@@ -84,6 +84,78 @@ export function loadTemplates(): Template[] {
 export function saveTemplates(list: Template[]) {
   try {
     localStorage.setItem(TEMPLATES_KEY, JSON.stringify(list));
+  } catch {
+    /* ignore */
+  }
+}
+
+const AUTOSAVE_KEY = "pls:autosave";
+
+export interface AutosaveDraft {
+  projectId: string;
+  savedAt: number;
+  project: Project;
+  assets: Record<string, ImageAsset>;
+  lastExplicitSaveAt: number | null;
+}
+
+export function saveAutosaveDraft(draft: AutosaveDraft) {
+  try {
+    localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(draft));
+  } catch {
+    /* quota — ignore */
+  }
+}
+
+export function loadAutosaveDraft(): AutosaveDraft | null {
+  try {
+    const raw = localStorage.getItem(AUTOSAVE_KEY);
+    return raw ? (JSON.parse(raw) as AutosaveDraft) : null;
+  } catch {
+    return null;
+  }
+}
+
+export function clearAutosaveDraft() {
+  try {
+    localStorage.removeItem(AUTOSAVE_KEY);
+  } catch {
+    /* ignore */
+  }
+}
+
+/** Serialize a project to a downloadable .pls file (JSON). */
+export function projectToPls(rec: StoredProject): Blob {
+  return new Blob([JSON.stringify(rec, null, 2)], { type: "application/json" });
+}
+
+export async function parsePlsFile(file: File): Promise<StoredProject> {
+  const text = await file.text();
+  const data = JSON.parse(text) as StoredProject;
+  if (!data?.project || !data?.assets) throw new Error("invalid");
+  return {
+    id: data.id || Math.random().toString(36).slice(2, 10),
+    name: data.name || data.project.name || "Imported",
+    savedAt: data.savedAt || Date.now(),
+    project: data.project,
+    assets: data.assets,
+  };
+}
+
+const PROFILES_KEY = "pls:print-profiles";
+
+export function loadPrintProfiles(): PrintProfile[] {
+  if (typeof localStorage === "undefined") return [];
+  try {
+    return JSON.parse(localStorage.getItem(PROFILES_KEY) ?? "[]") as PrintProfile[];
+  } catch {
+    return [];
+  }
+}
+
+export function savePrintProfiles(list: PrintProfile[]) {
+  try {
+    localStorage.setItem(PROFILES_KEY, JSON.stringify(list));
   } catch {
     /* ignore */
   }

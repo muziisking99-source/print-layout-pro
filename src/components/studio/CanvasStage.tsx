@@ -25,6 +25,7 @@ export function CanvasStage() {
   const snap = useStudio((s) => s.snap);
   const guides = useStudio((s) => s.guides);
   const showSafeArea = useStudio((s) => s.showSafeArea);
+  const showPrintOverlay = useStudio((s) => s.showPrintOverlay);
   const safeArea = useStudio((s) => s.safeArea);
   const fitRequest = useStudio((s) => s.fitRequest);
   const setState = useStudio((s) => s.set);
@@ -37,6 +38,7 @@ export function CanvasStage() {
   const pageRef = useRef<HTMLDivElement>(null);
   const [drag, setDrag] = useState<DragMode | null>(null);
   const [snapLines, setSnapLines] = useState<{ v: number[]; h: number[] }>({ v: [], h: [] });
+  const dragSnapshot = useRef(project);
 
   const doc = project.doc;
   const page = project.pages[pageIndex];
@@ -145,6 +147,7 @@ export function CanvasStage() {
   const onObjectPointerDown = (e: React.PointerEvent, obj: PlacedObject) => {
     if (obj.locked) return;
     e.stopPropagation();
+    dragSnapshot.current = structuredClone(project);
     const ids = selectedIds.includes(obj.id)
       ? selectedIds
       : e.shiftKey
@@ -160,6 +163,7 @@ export function CanvasStage() {
 
   const onHandlePointerDown = (e: React.PointerEvent, obj: PlacedObject, handle: string) => {
     e.stopPropagation();
+    dragSnapshot.current = structuredClone(project);
     const p = toMm(e.clientX, e.clientY);
     if (handle === "rotate") {
       setDrag({ kind: "rotate", id: obj.id, cx: obj.x + obj.width / 2, cy: obj.y + obj.height / 2 });
@@ -228,8 +232,10 @@ export function CanvasStage() {
 
   const endDrag = () => {
     if (drag) {
-      // push a single history entry for the finished gesture
-      useStudio.setState((s) => ({ past: [...s.past.slice(-49), s.past[s.past.length - 1] ?? s.project] }));
+      useStudio.setState((s) => ({
+        past: [...s.past.slice(-49), dragSnapshot.current],
+        future: [],
+      }));
     }
     setDrag(null);
     setSnapLines({ v: [], h: [] });
@@ -257,7 +263,7 @@ export function CanvasStage() {
   return (
     <div
       ref={wrapRef}
-      className="relative flex-1 overflow-auto bg-canvas-bg"
+      className="canvas-atmosphere relative flex-1 overflow-auto"
       onPointerMove={onPointerMove}
       onPointerUp={endDrag}
       onPointerLeave={endDrag}
@@ -338,6 +344,36 @@ export function CanvasStage() {
               />
             )}
 
+            {showPrintOverlay && (
+              <>
+                {doc.bleed > 0 && (
+                  <span
+                    className="pointer-events-none absolute z-10 rounded bg-background/80 px-1.5 py-0.5 text-[9px] font-medium tracking-wide text-rose-300/90"
+                    style={{ left: -bleed - 2, top: -bleed - 16 }}
+                  >
+                    Bleed {doc.bleed} mm
+                  </span>
+                )}
+                <span
+                  className="pointer-events-none absolute z-10 rounded bg-background/80 px-1.5 py-0.5 text-[9px] font-medium tracking-wide text-sky-300/90"
+                  style={{ left: 4, top: 4 }}
+                >
+                  Trim
+                </span>
+                {(showSafeArea || safeArea > 0) && (
+                  <span
+                    className="pointer-events-none absolute z-10 rounded bg-background/80 px-1.5 py-0.5 text-[9px] font-medium tracking-wide text-emerald-300/90"
+                    style={{
+                      left: safeArea * scale + 4,
+                      top: safeArea * scale + 4,
+                    }}
+                  >
+                    Safe {safeArea} mm
+                  </span>
+                )}
+              </>
+            )}
+
             {guides.v.map((g, i) => (
               <div key={`v${i}`} className="pointer-events-none absolute top-0 h-full w-px bg-cyan-400/70" style={{ left: g * scale }} />
             ))}
@@ -377,15 +413,45 @@ export function CanvasStage() {
                       />
                     ) : obj.type === "text" ? (
                       <span
-                        className="block p-1 leading-tight"
-                        style={{ fontSize: (obj.fontSize ?? 12) * (scale / (96 / 25.4)) * 0.35, color: obj.color ?? "#111" }}
+                        className="block h-full w-full p-0.5 leading-tight"
+                        style={{
+                          fontSize: Math.max(8, (obj.fontSize ?? 12) * (scale / (72 / 25.4))),
+                          color: obj.color ?? "#111",
+                          fontWeight: obj.bold ? 700 : 400,
+                          fontStyle: obj.italic ? "italic" : "normal",
+                          textAlign: obj.align ?? "left",
+                        }}
                       >
                         {obj.text}
                       </span>
                     ) : obj.type === "rect" ? (
-                      <div className="h-full w-full border" style={{ borderColor: obj.color ?? "#111" }} />
+                      <div
+                        className="h-full w-full"
+                        style={{
+                          border: `${(obj.strokeWidth ?? 0.75) * (scale / (72 / 25.4))}px solid ${obj.color ?? "#111"}`,
+                          background:
+                            obj.fill && obj.fill !== "none" ? obj.fill : "transparent",
+                        }}
+                      />
+                    ) : obj.type === "circle" ? (
+                      <div
+                        className="h-full w-full rounded-full"
+                        style={{
+                          border: `${(obj.strokeWidth ?? 0.75) * (scale / (72 / 25.4))}px solid ${obj.color ?? "#111"}`,
+                          background:
+                            obj.fill && obj.fill !== "none" ? obj.fill : "transparent",
+                        }}
+                      />
+                    ) : obj.type === "line" ? (
+                      <div
+                        className="absolute left-0 top-1/2 w-full -translate-y-1/2"
+                        style={{
+                          height: Math.max(1, (obj.strokeWidth ?? 0.75) * (scale / (72 / 25.4))),
+                          background: obj.color ?? "#111",
+                        }}
+                      />
                     ) : (
-                      <div className="flex h-full w-full items-center justify-center border-2 border-dashed border-slate-400/70 bg-slate-100 text-[11px] font-medium text-slate-500">
+                      <div className="flex h-full w-full items-center justify-center border border-dashed border-zinc-300/80 bg-zinc-50 font-display text-[11px] font-medium tracking-tight text-zinc-500">
                         Drop image here
                       </div>
                     )}

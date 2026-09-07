@@ -4,6 +4,7 @@ import type {
   ImageAsset,
   Page,
   PlacedObject,
+  PrintProfile,
   Project,
   Template,
 } from "@/types/project";
@@ -13,6 +14,8 @@ import {
   loadTemplates,
   saveTemplates,
   saveProjectRecord,
+  loadPrintProfiles,
+  savePrintProfiles,
   type StoredProject,
 } from "@/services/projectStorage";
 
@@ -66,8 +69,11 @@ interface StudioState {
   guides: Guides;
   showSafeArea: boolean;
   safeArea: number;
+  showPrintOverlay: boolean;
+  printCheckOpen: boolean;
   lastSavedAt: number | null;
   templates: Template[];
+  printProfiles: PrintProfile[];
 
   set: <K extends keyof StudioState>(patch: Pick<StudioState, K> | Partial<StudioState>) => void;
   mutate: (fn: (p: Project) => void, record?: boolean) => void;
@@ -78,12 +84,16 @@ interface StudioState {
   removeAsset: (id: string) => void;
   placeAsset: (assetId: string, at?: { x: number; y: number }) => void;
   assignAssetToObject: (objectId: string, assetId: string) => void;
+  placeOnEmptySlots: (assetIds: string[]) => void;
+  replaceSelectedWithAsset: (assetId: string) => void;
   addObject: (obj: Partial<PlacedObject> & { type: PlacedObject["type"] }) => string;
   updateObject: (id: string, patch: Partial<PlacedObject>, record?: boolean) => void;
   deleteSelected: () => void;
   duplicateSelected: () => void;
   copySelected: () => void;
+  cutSelected: () => void;
   paste: () => void;
+  selectAll: () => void;
   reorder: (id: string, dir: "front" | "back" | "forward" | "backward") => void;
   align: (mode: string) => void;
 
@@ -96,6 +106,11 @@ interface StudioState {
     assetIds?: string[] | undefined;
   }) => void;
   quickTwoUpA4: () => void;
+  catalogFromAssets: (assetIds?: string[]) => void;
+  fillPageWithSize: (objectWidth: number, objectHeight: number, opts?: {
+    allowRotation?: boolean;
+    assetIds?: string[];
+  }) => void;
 
   addPage: () => void;
   duplicatePage: () => void;
@@ -108,6 +123,10 @@ interface StudioState {
   saveTemplate: (name: string) => void;
   applyTemplate: (t: Template) => void;
   refreshTemplates: () => void;
+  refreshProfiles: () => void;
+  savePrintProfile: (name: string, pdfQuality?: PrintProfile["pdfQuality"]) => void;
+  applyPrintProfile: (profile: PrintProfile) => void;
+  deletePrintProfile: (id: string) => void;
 }
 
 export const useStudio = create<StudioState>((set, get) => ({
@@ -129,8 +148,11 @@ export const useStudio = create<StudioState>((set, get) => ({
   guides: { v: [], h: [] },
   showSafeArea: false,
   safeArea: 3,
+  showPrintOverlay: false,
+  printCheckOpen: false,
   lastSavedAt: null,
   templates: [],
+  printProfiles: [],
 
   set: (patch) => set(patch as Partial<StudioState>),
 
@@ -217,6 +239,44 @@ export const useStudio = create<StudioState>((set, get) => ({
     });
   },
 
+  placeOnEmptySlots: (assetIds) => {
+    if (!assetIds.length) return;
+    const { pageIndex } = get();
+    let cursor = 0;
+    get().mutate((p) => {
+      const page = p.pages[pageIndex];
+      if (!page) return;
+      for (const obj of page.objects) {
+        if (obj.type === "image" && !obj.assetId && cursor < assetIds.length) {
+          const assetId = assetIds[cursor++]!;
+          const asset = get().assets[assetId];
+          obj.assetId = assetId;
+          obj.name = asset?.name ?? obj.name;
+        }
+      }
+    });
+    while (cursor < assetIds.length) {
+      get().placeAsset(assetIds[cursor++]!);
+    }
+  },
+
+  replaceSelectedWithAsset: (assetId) => {
+    const asset = get().assets[assetId];
+    if (!asset) return;
+    const { selectedIds } = get();
+    if (!selectedIds.length) return;
+    get().mutate((p) => {
+      for (const page of p.pages) {
+        for (const obj of page.objects) {
+          if (!selectedIds.includes(obj.id) || obj.locked) continue;
+          obj.assetId = assetId;
+          obj.name = asset.name;
+          obj.type = "image";
+        }
+      }
+    });
+  },
+
   addObject: (obj) => {
     const id = uid();
     const { pageIndex, project } = get();
@@ -279,6 +339,16 @@ export const useStudio = create<StudioState>((set, get) => ({
     const { selectedIds, project, pageIndex } = get();
     const page = project.pages[pageIndex];
     set({ clipboard: clone(page?.objects.filter((o) => selectedIds.includes(o.id)) ?? []) });
+  },
+
+  cutSelected: () => {
+    get().copySelected();
+    get().deleteSelected();
+  },
+
+  selectAll: () => {
+    const page = get().project.pages[get().pageIndex];
+    set({ selectedIds: page?.objects.map((o) => o.id) ?? [] });
   },
 
   paste: () => {
@@ -450,6 +520,62 @@ export const useStudio = create<StudioState>((set, get) => ({
     get().autoArrange({ objectWidth: 210, objectHeight: 297, quantity: 2, allowRotation: false, assetIds: ids });
   },
 
+  fillPageWithSize: (objectWidth, objectHeight, opts) => {
+    const doc = get().project.doc;
+    const result = computeImposition({
+      paperWidth: doc.width,
+      paperHeight: doc.height,
+      objectWidth,
+      objectHeight,
+      marginTop: doc.margins.top,
+      marginRight: doc.margins.right,
+      marginBottom: doc.margins.bottom,
+      marginLeft: doc.margins.left,
+      horizontalGap: doc.gutterH,
+      verticalGap: doc.gutterV,
+      allowRotation: opts?.allowRotation ?? true,
+    });
+    if (!result.perPage) return;
+    get().autoArrange({
+      objectWidth,
+      objectHeight,
+      quantity: result.perPage,
+      allowRotation: opts?.allowRotation ?? true,
+      assetIds: opts?.assetIds,
+    });
+  },
+
+  catalogFromAssets: (assetIds) => {
+    const ids = assetIds?.length ? assetIds : Object.keys(get().assets);
+    if (!ids.length) return;
+    const { project } = get();
+    get().mutate((p) => {
+      p.pages = ids.map((assetId) => {
+        const asset = get().assets[assetId];
+        return {
+          id: uid(),
+          objects: [
+            {
+              id: uid(),
+              type: "image" as const,
+              name: asset?.name ?? "Page",
+              assetId,
+              x: 0,
+              y: 0,
+              width: project.doc.width,
+              height: project.doc.height,
+              rotation: 0,
+              locked: false,
+              visible: true,
+              fit: "fit" as const,
+            },
+          ],
+        };
+      });
+    });
+    set({ pageIndex: 0, selectedIds: [], fitRequest: get().fitRequest + 1 });
+  },
+
   addPage: () => {
     get().mutate((p) => p.pages.push({ id: uid(), objects: [] }));
     set({ pageIndex: get().project.pages.length - 1, selectedIds: [] });
@@ -534,4 +660,43 @@ export const useStudio = create<StudioState>((set, get) => ({
   },
 
   refreshTemplates: () => set({ templates: loadTemplates() }),
+
+  refreshProfiles: () => set({ printProfiles: loadPrintProfiles() }),
+
+  savePrintProfile: (name, pdfQuality = "high") => {
+    const { project, printProfiles } = get();
+    const profile: PrintProfile = {
+      id: uid(),
+      name,
+      paper: project.doc.paper,
+      orientation: project.doc.orientation,
+      margins: clone(project.doc.margins),
+      bleed: project.doc.bleed,
+      gutterH: project.doc.gutterH,
+      gutterV: project.doc.gutterV,
+      cropMarks: project.doc.cropMarks,
+      pdfQuality,
+    };
+    const list = [...printProfiles, profile];
+    savePrintProfiles(list);
+    set({ printProfiles: list });
+  },
+
+  applyPrintProfile: (profile) => {
+    get().setDoc({
+      paper: profile.paper,
+      orientation: profile.orientation,
+      margins: clone(profile.margins),
+      bleed: profile.bleed,
+      gutterH: profile.gutterH,
+      gutterV: profile.gutterV,
+      cropMarks: profile.cropMarks,
+    });
+  },
+
+  deletePrintProfile: (id) => {
+    const list = get().printProfiles.filter((p) => p.id !== id);
+    savePrintProfiles(list);
+    set({ printProfiles: list });
+  },
 }));

@@ -75,6 +75,14 @@ export const OBJECT_PRESETS: { id: string; label: string; w: number; h: number }
   { id: "photo6x4", label: 'Photo 6 × 4"', w: 152.4, h: 101.6 },
   { id: "photo7x5", label: 'Photo 7 × 5"', w: 177.8, h: 127 },
   { id: "photo10x8", label: 'Photo 10 × 8"', w: 254, h: 203.2 },
+  { id: "passport", label: "Passport (35 × 45)", w: 35, h: 45 },
   { id: "card", label: "Business card (90 × 50)", w: 90, h: 50 },
   { id: "label", label: "Label (100 × 50)", w: 100, h: 50 },
 ];
+
+export const PHOTO_PRESETS = [
+  { id: "photo6x4", label: '6 × 4"', w: 152.4, h: 101.6 },
+  { id: "photo7x5", label: '7 × 5"', w: 177.8, h: 127 },
+  { id: "photo10x8", label: '8 × 10"', w: 203.2, h: 254 },
+  { id: "passport", label: "Passport 35 × 45", w: 35, h: 45 },
+] as const;

@@ -64,6 +64,9 @@ export async function buildPdf(
   pdf.setTitle(project.name);
   pdf.setProducer("Print Layout Studio");
   const font = await pdf.embedFont(StandardFonts.Helvetica);
+  const fontBold = await pdf.embedFont(StandardFonts.HelveticaBold);
+  const fontOblique = await pdf.embedFont(StandardFonts.HelveticaOblique);
+  const fontBoldOblique = await pdf.embedFont(StandardFonts.HelveticaBoldOblique);
 
   const bleed = opts.includeBleed ? project.doc.bleed : 0;
   const markRoom = opts.cropMarks ? CROP_MARK_OFFSET + CROP_MARK_LENGTH : 0;
@@ -140,21 +143,65 @@ export async function buildPdf(
           });
         } else if (obj.type === "text") {
           const size = obj.fontSize ?? 12;
-          p.drawText(obj.text ?? "", {
-            x: mmToPt(extra + obj.x),
+          const useFont =
+            obj.bold && obj.italic
+              ? fontBoldOblique
+              : obj.bold
+                ? fontBold
+                : obj.italic
+                  ? fontOblique
+                  : font;
+          const text = obj.text ?? "";
+          const textWidth = useFont.widthOfTextAtSize(text, size);
+          let tx = mmToPt(extra + obj.x);
+          if (obj.align === "center") {
+            tx = mmToPt(extra + obj.x + obj.width / 2) - textWidth / 2;
+          } else if (obj.align === "right") {
+            tx = mmToPt(extra + obj.x + obj.width) - textWidth;
+          }
+          p.drawText(text, {
+            x: tx,
             y: mmToPt(pageH - extra - obj.y - obj.height) + mmToPt(obj.height) - size,
             size,
-            font,
+            font: useFont,
             color: hexToRgb(obj.color ?? "#111111"),
           });
         } else if (obj.type === "rect") {
-          p.drawRectangle({
+          const opts: Parameters<typeof p.drawRectangle>[0] = {
             x: mmToPt(extra + obj.x),
             y: mmToPt(pageH - extra - obj.y - obj.height),
             width: mmToPt(obj.width),
             height: mmToPt(obj.height),
             borderColor: hexToRgb(obj.color ?? "#111111"),
-            borderWidth: 0.75,
+            borderWidth: obj.strokeWidth ?? 0.75,
+          };
+          if (obj.fill && obj.fill !== "none") opts.color = hexToRgb(obj.fill);
+          p.drawRectangle(opts);
+        } else if (obj.type === "circle") {
+          const rx = obj.width / 2;
+          const ry = obj.height / 2;
+          const opts: Parameters<typeof p.drawEllipse>[0] = {
+            x: mmToPt(extra + obj.x + rx),
+            y: mmToPt(pageH - extra - obj.y - ry),
+            xScale: mmToPt(rx),
+            yScale: mmToPt(ry),
+            borderColor: hexToRgb(obj.color ?? "#111111"),
+            borderWidth: obj.strokeWidth ?? 0.75,
+          };
+          if (obj.fill && obj.fill !== "none") opts.color = hexToRgb(obj.fill);
+          p.drawEllipse(opts);
+        } else if (obj.type === "line") {
+          p.drawLine({
+            start: {
+              x: mmToPt(extra + obj.x),
+              y: mmToPt(pageH - extra - obj.y),
+            },
+            end: {
+              x: mmToPt(extra + obj.x + obj.width),
+              y: mmToPt(pageH - extra - obj.y - obj.height),
+            },
+            thickness: obj.strokeWidth ?? 1,
+            color: hexToRgb(obj.color ?? "#111111"),
           });
         }
       };
@@ -193,8 +240,11 @@ export async function buildPdf(
   return await pdf.save();
 }
 
-export function downloadBlob(data: BlobPart, filename: string, mime: string) {
-  const blob = new Blob([data as BlobPart], { type: mime });
+export function downloadBlob(data: Blob | Uint8Array, filename: string, mime: string) {
+  const blob =
+    data instanceof Blob
+      ? data
+      : new Blob([Uint8Array.from(data)], { type: mime });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
