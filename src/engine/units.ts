@@ -56,8 +56,8 @@ export const PAPER_SIZES: PaperSize[] = [
   { id: "Custom", label: "Custom size", w: 210, h: 297 },
 ];
 
-export function paperById(id: string) {
-  return PAPER_SIZES.find((p) => p.id === id) ?? PAPER_SIZES[4];
+export function paperById(id: string): PaperSize {
+  return PAPER_SIZES.find((p) => p.id === id) ?? { id: "A4", label: "A4", w: 210, h: 297 };
 }
 
 export function orientedSize(id: string, orientation: Orientation) {
