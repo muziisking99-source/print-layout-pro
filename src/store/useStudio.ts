@@ -91,9 +91,9 @@ interface StudioState {
   autoArrange: (opts: {
     objectWidth: number;
     objectHeight: number;
-    quantity?: number;
-    allowRotation?: boolean;
-    assetIds?: string[];
+    quantity?: number | undefined;
+    allowRotation?: boolean | undefined;
+    assetIds?: string[] | undefined;
   }) => void;
   quickTwoUpA4: () => void;
 
