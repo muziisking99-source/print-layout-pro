@@ -12,7 +12,7 @@ export function PanelHeading({
 }) {
   return (
     <div className={cn("flex items-center justify-between gap-2", className)}>
-      <h3 className="font-display text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+      <h3 className="font-display text-[10px] font-semibold uppercase tracking-[0.16em] text-stone-300">
         {children}
       </h3>
       {action}

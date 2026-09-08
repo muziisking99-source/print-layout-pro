@@ -68,95 +68,95 @@
 
 :root {
   --radius: 0.45rem;
-  /* Charcoal + Flame — no navy base */
-  --flame: #ff5c3a;
-  --cyan: #14b8a6;
-  --ink: #141210;
-  --background: #f7f4f1;
-  --foreground: #1c1917;
-  --card: #ffffff;
-  --card-foreground: #1c1917;
-  --popover: #ffffff;
-  --popover-foreground: #1c1917;
-  --primary: #e8472a;
-  --primary-foreground: #fff7f5;
-  --secondary: #efeae6;
-  --secondary-foreground: #292524;
-  --muted: #f0ebe6;
-  --muted-foreground: #78716c;
-  --accent: #dffaf5;
-  --accent-foreground: #0f766e;
-  --destructive: #dc2626;
-  --destructive-foreground: #ffffff;
-  --border: #e7e0d8;
-  --input: #e7e0d8;
-  --ring: #14b8a6;
-  --chart-1: #e8472a;
-  --chart-2: #0d9488;
-  --chart-3: #f59e0b;
-  --chart-4: #ec4899;
-  --chart-5: #a8a29e;
-  --sidebar: #f3efe9;
-  --sidebar-foreground: #1c1917;
-  --sidebar-primary: #e8472a;
-  --sidebar-primary-foreground: #fff7f5;
-  --sidebar-accent: #dffaf5;
-  --sidebar-accent-foreground: #0f766e;
-  --sidebar-border: #e7e0d8;
-  --sidebar-ring: #14b8a6;
-  --canvas-bg: #ebe4db;
-  --accent-ring: #0d9488;
-  --panel: #faf7f4;
-  --panel-foreground: #1c1917;
-  --surface: #ffffff;
-  --surface-raised: #ffffff;
-  --success: #059669;
-  --warning: #d97706;
-}
-
-.dark {
-  /* Warm charcoal chrome — coral + teal accents, zero navy */
+  /* App is dark-first: charcoal chrome + coral/teal accents */
   --flame: #ff6b45;
   --cyan: #2dd4bf;
   --ink: #0c0b0a;
   --background: #0c0b0a;
   --foreground: #fafaf9;
-  --card: #181614;
+  --card: #1c1917;
   --card-foreground: #fafaf9;
   --popover: #1c1917;
   --popover-foreground: #fafaf9;
   --primary: #ff6b45;
-  --primary-foreground: #1a0602;
-  --secondary: #221f1c;
-  --secondary-foreground: #e7e5e4;
-  --muted: #1a1714;
-  --muted-foreground: #a8a29e;
-  --accent: #142822;
-  --accent-foreground: #99f6e4;
+  --primary-foreground: #1c1917;
+  --secondary: #292524;
+  --secondary-foreground: #fafaf9;
+  --muted: #292524;
+  --muted-foreground: #d6d3d1;
+  --accent: #292524;
+  --accent-foreground: #fafaf9;
   --destructive: #fb7185;
-  --destructive-foreground: #1a0602;
-  --border: color-mix(in oklab, #a8a29e 28%, transparent);
-  --input: color-mix(in oklab, #a8a29e 22%, transparent);
+  --destructive-foreground: #1c1917;
+  --border: #44403c;
+  --input: #44403c;
   --ring: #2dd4bf;
   --chart-1: #ff6b45;
   --chart-2: #2dd4bf;
   --chart-3: #fbbf24;
   --chart-4: #f472b6;
   --chart-5: #a8a29e;
-  --sidebar: #100e0c;
+  --sidebar: #0c0b0a;
   --sidebar-foreground: #fafaf9;
   --sidebar-primary: #ff6b45;
-  --sidebar-primary-foreground: #1a0602;
-  --sidebar-accent: #142822;
-  --sidebar-accent-foreground: #99f6e4;
-  --sidebar-border: color-mix(in oklab, #a8a29e 24%, transparent);
+  --sidebar-primary-foreground: #1c1917;
+  --sidebar-accent: #292524;
+  --sidebar-accent-foreground: #fafaf9;
+  --sidebar-border: #44403c;
   --sidebar-ring: #2dd4bf;
   --canvas-bg: #0a0908;
   --accent-ring: #2dd4bf;
-  --panel: #12100e;
-  --panel-foreground: #f5f5f4;
-  --surface: #1a1714;
-  --surface-raised: #24201c;
+  --panel: #0c0b0a;
+  --panel-foreground: #fafaf9;
+  --surface: #1c1917;
+  --surface-raised: #292524;
+  --success: #34d399;
+  --warning: #fbbf24;
+}
+
+.dark {
+  /* Same as :root — kept for class-based dark consumers */
+  --flame: #ff6b45;
+  --cyan: #2dd4bf;
+  --ink: #0c0b0a;
+  --background: #0c0b0a;
+  --foreground: #fafaf9;
+  --card: #1c1917;
+  --card-foreground: #fafaf9;
+  --popover: #1c1917;
+  --popover-foreground: #fafaf9;
+  --primary: #ff6b45;
+  --primary-foreground: #1c1917;
+  --secondary: #292524;
+  --secondary-foreground: #fafaf9;
+  --muted: #292524;
+  --muted-foreground: #d6d3d1;
+  --accent: #292524;
+  --accent-foreground: #fafaf9;
+  --destructive: #fb7185;
+  --destructive-foreground: #1c1917;
+  --border: #44403c;
+  --input: #44403c;
+  --ring: #2dd4bf;
+  --chart-1: #ff6b45;
+  --chart-2: #2dd4bf;
+  --chart-3: #fbbf24;
+  --chart-4: #f472b6;
+  --chart-5: #a8a29e;
+  --sidebar: #0c0b0a;
+  --sidebar-foreground: #fafaf9;
+  --sidebar-primary: #ff6b45;
+  --sidebar-primary-foreground: #1c1917;
+  --sidebar-accent: #292524;
+  --sidebar-accent-foreground: #fafaf9;
+  --sidebar-border: #44403c;
+  --sidebar-ring: #2dd4bf;
+  --canvas-bg: #0a0908;
+  --accent-ring: #2dd4bf;
+  --panel: #0c0b0a;
+  --panel-foreground: #fafaf9;
+  --surface: #1c1917;
+  --surface-raised: #292524;
   --success: #34d399;
   --warning: #fbbf24;
 }
@@ -198,6 +198,8 @@
     .pressable {
       animation: none !important;
       transition: none !important;
+      opacity: 1 !important;
+      transform: none !important;
     }
   }
 }
@@ -247,6 +249,15 @@
 
   .studio-stagger > * {
     animation: studio-fade-in 0.32s var(--ease-studio) both;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .studio-fade-in,
+    .studio-stagger > * {
+      animation: none !important;
+      opacity: 1 !important;
+      transform: none !important;
+    }
   }
 
   .studio-stagger > *:nth-child(1) {
@@ -301,10 +312,47 @@
 
   .panel-section {
     border-radius: calc(var(--radius) + 2px);
-    border: 1px solid color-mix(in oklab, #a8a29e 16%, transparent);
-    background:
-      linear-gradient(165deg, color-mix(in oklab, #ff6b45 3.5%, transparent), transparent 50%),
-      color-mix(in oklab, var(--color-surface) 90%, transparent);
+    border: 1px solid rgb(68 64 60);
+    background: #1c1917;
+    color: #fafaf9;
+  }
+
+  .panel-section .text-muted-foreground,
+  .studio-sidebar .text-muted-foreground {
+    color: #d6d3d1 !important;
+  }
+
+  .studio-sidebar {
+    background: #0c0b0a;
+    color: #fafaf9;
+    overflow-x: hidden;
+  }
+
+  .studio-sidebar [data-radix-scroll-area-viewport] > div {
+    display: block !important;
+    min-width: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .studio-sidebar input,
+  .studio-sidebar textarea,
+  .studio-sidebar button[data-slot="select-trigger"],
+  .studio-sidebar [data-radix-select-trigger] {
+    color: #fafaf9;
+  }
+
+  /* Outline/ghost controls must stay readable on charcoal cards */
+  .studio-sidebar button.border,
+  .studio-sidebar .border.bg-transparent,
+  .studio-sidebar button[class*="border-input"] {
+    background-color: #292524;
+    color: #fafaf9;
+    border-color: #57534e;
+  }
+
+  .studio-sidebar button:not([class*="bg-primary"]):not([class*="bg-destructive"]):hover {
+    color: #fafaf9;
   }
 
   .text-brand-gradient {

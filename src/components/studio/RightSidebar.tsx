@@ -38,7 +38,7 @@ function NumField({
 }) {
   return (
     <div className="space-y-1">
-      <Label className="text-[10px] text-muted-foreground">{label}</Label>
+      <Label className="text-[10px] text-stone-300">{label}</Label>
       <Input
         type="number"
         step={step}
@@ -419,8 +419,8 @@ function DocumentSettings() {
       <p className="text-[10px] text-muted-foreground">
         Trim: {doc.width} × {doc.height} mm
       </p>
-      <div className="flex items-center justify-between">
-        <Label className="text-xs">Lock margins</Label>
+      <div className="flex items-center justify-between gap-2">
+        <Label className="min-w-0 flex-1 truncate text-xs">Lock margins</Label>
         <Switch
           checked={doc.marginsLocked}
           onCheckedChange={(marginsLocked) => setDoc({ marginsLocked })}
@@ -454,8 +454,8 @@ function DocumentSettings() {
           </SelectContent>
         </Select>
       </div>
-      <div className="flex items-center justify-between">
-        <Label className="text-xs">Crop marks</Label>
+      <div className="flex items-center justify-between gap-2">
+        <Label className="min-w-0 flex-1 truncate text-xs">Crop marks</Label>
         <Switch checked={doc.cropMarks} onCheckedChange={(cropMarks) => setDoc({ cropMarks })} />
       </div>
       <div className="space-y-1">
@@ -478,12 +478,12 @@ function DocumentSettings() {
 
       <div className="h-px bg-border/60" />
       <PanelHeading>View & snap</PanelHeading>
-      <div className="flex items-center justify-between">
-        <Label className="text-xs">Rulers</Label>
+      <div className="flex items-center justify-between gap-2">
+        <Label className="min-w-0 flex-1 truncate text-xs">Rulers</Label>
         <Switch checked={showRulers} onCheckedChange={(v) => setState({ showRulers: v })} />
       </div>
-      <div className="flex items-center justify-between">
-        <Label className="text-xs">Grid</Label>
+      <div className="flex items-center justify-between gap-2">
+        <Label className="min-w-0 flex-1 truncate text-xs">Grid</Label>
         <Switch checked={showGrid} onCheckedChange={(v) => setState({ showGrid: v })} />
       </div>
       <Select value={String(gridSize)} onValueChange={(v) => setState({ gridSize: Number(v) })}>
@@ -498,8 +498,8 @@ function DocumentSettings() {
           ))}
         </SelectContent>
       </Select>
-      <div className="flex items-center justify-between">
-        <Label className="text-xs">Safe area</Label>
+      <div className="flex items-center justify-between gap-2">
+        <Label className="min-w-0 flex-1 truncate text-xs">Safe area</Label>
         <Switch checked={showSafeArea} onCheckedChange={(v) => setState({ showSafeArea: v })} />
       </div>
       <NumField label="Safe area (mm)" value={safeArea} onChange={(v) => setState({ safeArea: v })} />
@@ -584,7 +584,7 @@ function PrintProfilesPanel() {
       </div>
       <div className="space-y-1.5">
         {profiles.length === 0 && (
-          <p className="text-[10px] text-muted-foreground">
+          <p className="text-[10px] text-stone-300">
             Save paper, margins, bleed, and crop marks as a reusable printer profile.
           </p>
         )}
@@ -628,7 +628,7 @@ function ObjectProperties() {
     return (
       <div className="space-y-2">
         <PanelHeading>Selection</PanelHeading>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-xs text-stone-300">
           {selectedIds.length > 1
             ? `${selectedIds.length} objects selected`
             : "Select an object to edit properties"}
@@ -707,8 +707,8 @@ function ObjectProperties() {
           disabled={obj.locked}
         />
       </div>
-      <div className="flex items-center justify-between">
-        <Label className="text-xs">Lock aspect ratio</Label>
+      <div className="flex items-center justify-between gap-2">
+        <Label className="min-w-0 flex-1 truncate text-xs">Lock aspect ratio</Label>
         <Switch checked={lockAspect} onCheckedChange={setLockAspect} />
       </div>
       <div className="space-y-1">
@@ -899,9 +899,9 @@ function ObjectProperties() {
 
 export function RightSidebar() {
   return (
-    <aside className="flex w-[18rem] shrink-0 flex-col border-l border-border/70 bg-panel text-panel-foreground">
-      <ScrollArea className="flex-1">
-        <div className="studio-stagger space-y-3 p-2.5">
+    <aside className="studio-sidebar flex h-full w-[19rem] min-w-[19rem] max-w-[19rem] shrink-0 flex-col overflow-hidden border-l border-stone-700 bg-[#0c0b0a] text-stone-50">
+      <ScrollArea className="min-h-0 flex-1" stableGutter>
+        <div className="box-border w-full max-w-full space-y-3 overflow-x-hidden p-2.5 pr-1 text-stone-50">
           <PrintCheckPanel />
           <div className="panel-section space-y-3 p-3">
             <QuickSetup />

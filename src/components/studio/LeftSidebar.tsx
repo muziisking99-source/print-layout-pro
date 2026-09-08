@@ -5,25 +5,25 @@ import { TemplatesPanel } from "./TemplatesPanel";
 
 export function LeftSidebar() {
   return (
-    <aside className="flex w-[17rem] shrink-0 flex-col border-r border-border/70 bg-panel text-panel-foreground">
+    <aside className="studio-sidebar flex w-[17rem] shrink-0 flex-col border-r border-stone-700 bg-[#0c0b0a] text-stone-50">
       <Tabs defaultValue="images" className="flex h-full flex-col">
-        <div className="border-b border-border/60 p-2">
-          <TabsList className="grid h-9 w-full grid-cols-3 rounded-lg bg-surface p-0.5">
+        <div className="border-b border-stone-700 p-2">
+          <TabsList className="grid h-9 w-full grid-cols-3 rounded-lg bg-stone-900 p-0.5">
             <TabsTrigger
               value="images"
-              className="rounded-md text-[11px] font-semibold tracking-wide data-[state=active]:bg-surface-raised data-[state=active]:text-foreground data-[state=active]:shadow-[0_1px_0_color-mix(in_oklab,white_8%,transparent)]"
+              className="rounded-md text-[11px] font-semibold tracking-wide text-stone-300 data-[state=active]:bg-stone-700 data-[state=active]:text-stone-50 data-[state=active]:shadow-sm"
             >
               Images
             </TabsTrigger>
             <TabsTrigger
               value="layers"
-              className="rounded-md text-[11px] font-semibold tracking-wide data-[state=active]:bg-surface-raised data-[state=active]:text-foreground data-[state=active]:shadow-[0_1px_0_color-mix(in_oklab,white_8%,transparent)]"
+              className="rounded-md text-[11px] font-semibold tracking-wide text-stone-300 data-[state=active]:bg-stone-700 data-[state=active]:text-stone-50 data-[state=active]:shadow-sm"
             >
               Layers
             </TabsTrigger>
             <TabsTrigger
               value="templates"
-              className="rounded-md text-[11px] font-semibold tracking-wide data-[state=active]:bg-surface-raised data-[state=active]:text-foreground data-[state=active]:shadow-[0_1px_0_color-mix(in_oklab,white_8%,transparent)]"
+              className="rounded-md text-[11px] font-semibold tracking-wide text-stone-300 data-[state=active]:bg-stone-700 data-[state=active]:text-stone-50 data-[state=active]:shadow-sm"
             >
               Templates
             </TabsTrigger>
