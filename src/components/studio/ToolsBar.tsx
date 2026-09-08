@@ -83,14 +83,14 @@ export function ToolsBar() {
   return (
     <TooltipProvider delayDuration={150}>
       <div className="pointer-events-none absolute left-3 top-3 z-20 flex flex-col gap-1">
-        <div className="pointer-events-auto glass-panel flex flex-col gap-0.5 rounded-xl p-1.5">
+        <div className="pointer-events-auto glass-panel flex flex-col gap-0.5 rounded-2xl p-1.5">
           {tools.map((t) => (
             <Tooltip key={t.id}>
               <TooltipTrigger asChild>
                 <Button
                   size="icon"
                   variant="ghost"
-                  className="pressable size-9 rounded-lg text-muted-foreground hover:bg-surface-raised hover:text-foreground"
+                  className="pressable size-9 rounded-xl text-muted-foreground hover:bg-surface-raised hover:text-foreground"
                   onClick={() => {
                     t.run();
                     toast.message(`${t.label} added`);
@@ -108,7 +108,7 @@ export function ToolsBar() {
               <Button
                 size="icon"
                 variant="ghost"
-                className="pressable size-9 rounded-lg text-muted-foreground hover:bg-surface-raised hover:text-foreground"
+                className="pressable size-9 rounded-xl text-muted-foreground hover:bg-surface-raised hover:text-foreground"
                 onClick={() => {
                   const ids = Object.keys(assets);
                   if (!ids.length) {

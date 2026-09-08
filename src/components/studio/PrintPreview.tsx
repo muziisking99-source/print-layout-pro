@@ -1,6 +1,8 @@
 import { useStudio } from "@/store/useStudio";
 import { Button } from "@/components/ui/button";
 import { fitRect } from "@/engine/layout";
+import { BrandMark } from "./ui-chrome";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const PX_PER_MM = 2.5;
 
@@ -18,37 +20,43 @@ export function PrintPreview({ onBack }: { onBack: () => void }) {
   const mark = 8;
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col bg-zinc-950 text-zinc-100">
-      <div className="flex items-center gap-3 border-b border-zinc-800 px-4 py-3">
-        <Button variant="secondary" onClick={onBack}>
+    <div className="fixed inset-0 z-50 flex flex-col bg-[#0c0b0a] text-foreground">
+      <div className="flex items-center gap-3 border-b border-border/60 bg-panel/95 px-4 py-3 backdrop-blur-md">
+        <BrandMark />
+        <div className="min-w-0">
+          <p className="font-display text-sm font-bold tracking-tight">Print preview</p>
+          <p className="truncate font-mono-nums text-[11px] text-muted-foreground">
+            {doc.paper} · {doc.orientation} · {doc.width} × {doc.height} mm
+          </p>
+        </div>
+        <Button variant="secondary" className="ml-2" onClick={onBack}>
           Back to editor
         </Button>
-        <div className="text-sm">
-          Print preview · {doc.paper} {doc.orientation} · {doc.width} × {doc.height} mm
-        </div>
-        <div className="ml-auto flex items-center gap-2 text-xs text-zinc-400">
+        <div className="ml-auto flex items-center gap-1 rounded-md border border-border/50 bg-surface/60 p-0.5">
           <Button
-            size="sm"
+            size="icon"
             variant="ghost"
+            className="size-8"
             disabled={pageIndex <= 0}
             onClick={() => setPageIndex(pageIndex - 1)}
           >
-            Prev
+            <ChevronLeft className="size-4" strokeWidth={1.75} />
           </Button>
-          <span>
+          <span className="font-mono-nums min-w-[4.5rem] text-center text-xs">
             {pageIndex + 1} / {project.pages.length}
           </span>
           <Button
-            size="sm"
+            size="icon"
             variant="ghost"
+            className="size-8"
             disabled={pageIndex >= project.pages.length - 1}
             onClick={() => setPageIndex(pageIndex + 1)}
           >
-            Next
+            <ChevronRight className="size-4" strokeWidth={1.75} />
           </Button>
         </div>
       </div>
-      <div className="flex flex-1 items-center justify-center overflow-auto p-10">
+      <div className="canvas-atmosphere flex flex-1 items-center justify-center overflow-auto p-10">
         <div className="relative" style={{ padding: bleed + mark + 16 }}>
           {doc.cropMarks && (
             <>
@@ -69,7 +77,7 @@ export function PrintPreview({ onBack }: { onBack: () => void }) {
                 return hx ? (
                   <div
                     key={i}
-                    className="absolute h-px bg-zinc-300"
+                    className="absolute h-px bg-slate-300"
                     style={{
                       left: x + (cx === 0 ? -mark - 4 : 4),
                       top: y,
@@ -79,7 +87,7 @@ export function PrintPreview({ onBack }: { onBack: () => void }) {
                 ) : (
                   <div
                     key={i}
-                    className="absolute w-px bg-zinc-300"
+                    className="absolute w-px bg-slate-300"
                     style={{
                       left: x,
                       top: y + (cy === 0 ? -mark - 4 : 4),
@@ -102,7 +110,7 @@ export function PrintPreview({ onBack }: { onBack: () => void }) {
             />
           )}
           <div
-            className="relative bg-white shadow-2xl"
+            className="relative bg-white shadow-page"
             style={{
               width: pageW,
               height: pageH,
@@ -148,7 +156,7 @@ export function PrintPreview({ onBack }: { onBack: () => void }) {
                       style={{ width: inner.w * scale, height: inner.h * scale }}
                     />
                   ) : (
-                    <div className="flex h-full w-full items-center justify-center bg-slate-100 text-xs text-slate-500">
+                    <div className="flex h-full w-full items-center justify-center bg-slate-100 font-display text-xs font-medium text-slate-500">
                       {obj.name}
                     </div>
                   )}

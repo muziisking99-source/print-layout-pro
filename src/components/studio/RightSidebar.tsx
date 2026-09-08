@@ -10,7 +10,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Switch } from "@/components/ui/switch";
 import { useStudio } from "@/store/useStudio";
@@ -198,18 +197,24 @@ function QuickSetup() {
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between gap-2">
-        <PanelHeading>Quick setup</PanelHeading>
-        <button
-          type="button"
-          className="text-[10px] font-medium text-primary hover:underline"
-          onClick={() => setAdvanced((v) => !v)}
+        <PanelHeading
+          className="flex-1"
+          action={
+            <button
+              type="button"
+              className="cursor-pointer text-[10px] font-semibold text-primary hover:underline"
+              onClick={() => setAdvanced((v) => !v)}
+            >
+              {advanced ? "Basic" : "Advanced"}
+            </button>
+          }
         >
-          {advanced ? "Basic" : "Advanced"}
-        </button>
+          Quick setup
+        </PanelHeading>
       </div>
 
       <Button
-        className="pressable w-full rounded-lg font-semibold shadow-[inset_0_1px_0_oklch(1_0_0/0.18)]"
+        className="cta-glow pressable w-full rounded-md font-bold"
         onClick={() => quickTwoUpA4()}
       >
         2 × A4 on A3
@@ -236,10 +241,10 @@ function QuickSetup() {
               }
             }}
             className={cn(
-              "pressable rounded-lg border px-2 py-2 text-left transition-colors",
+              "pressable cursor-pointer rounded-lg border px-2 py-2 text-left transition-colors",
               mode === intent.id
-                ? "border-primary/40 bg-primary/10"
-                : "border-border/70 bg-surface/50 hover:border-border",
+                ? "border-primary/45 bg-primary/12 shadow-[inset_0_0_0_1px_color-mix(in_oklab,var(--color-primary)_20%,transparent)]"
+                : "border-border/60 bg-surface/40 hover:border-border hover:bg-surface-raised",
             )}
           >
             <p className="text-[11px] font-semibold tracking-tight">{intent.title}</p>
@@ -471,7 +476,7 @@ function DocumentSettings() {
         </div>
       </div>
 
-      <Separator />
+      <div className="h-px bg-border/60" />
       <PanelHeading>View & snap</PanelHeading>
       <div className="flex items-center justify-between">
         <Label className="text-xs">Rulers</Label>
@@ -876,15 +881,15 @@ function ObjectProperties() {
           <p
             className={cn(
               "font-mono-nums",
-              quality === "good" && "text-emerald-400/90",
-              quality === "warn" && "text-amber-300/90",
-              quality === "bad" && "text-rose-400/90",
+              quality === "good" && "text-success",
+              quality === "warn" && "text-warning",
+              quality === "bad" && "text-destructive",
             )}
           >
             Effective DPI: {dpi} — {qualityLabel[quality]}
           </p>
           {quality === "bad" && (
-            <p className="text-amber-300/90">Image may appear pixelated when printed.</p>
+            <p className="text-warning">Image may appear pixelated when printed.</p>
           )}
         </div>
       )}
@@ -894,17 +899,22 @@ function ObjectProperties() {
 
 export function RightSidebar() {
   return (
-    <aside className="flex w-[18.5rem] shrink-0 flex-col border-l border-border/80 bg-panel text-panel-foreground">
+    <aside className="flex w-[18rem] shrink-0 flex-col border-l border-border/70 bg-panel text-panel-foreground">
       <ScrollArea className="flex-1">
-        <div className="studio-stagger space-y-5 p-3">
+        <div className="studio-stagger space-y-3 p-2.5">
           <PrintCheckPanel />
-          <QuickSetup />
-          <Separator className="bg-border/70" />
-          <DocumentSettings />
-          <Separator className="bg-border/70" />
-          <PrintProfilesPanel />
-          <Separator className="bg-border/70" />
-          <ObjectProperties />
+          <div className="panel-section space-y-3 p-3">
+            <QuickSetup />
+          </div>
+          <div className="panel-section space-y-3 p-3">
+            <DocumentSettings />
+          </div>
+          <div className="panel-section space-y-3 p-3">
+            <PrintProfilesPanel />
+          </div>
+          <div className="panel-section space-y-3 p-3">
+            <ObjectProperties />
+          </div>
         </div>
       </ScrollArea>
     </aside>

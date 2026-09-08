@@ -36,6 +36,7 @@ import {
 } from "@/components/ui/tooltip";
 import { useStudio } from "@/store/useStudio";
 import { cn } from "@/lib/utils";
+import { BrandMark } from "./ui-chrome";
 
 function Tip({ label, children }: { label: string; children: ReactNode }) {
   return (
@@ -69,7 +70,7 @@ function ToolBtn({
         disabled={disabled}
         onClick={onClick}
         className={cn(
-          "pressable h-8 gap-1.5 rounded-lg px-2.5 text-xs text-muted-foreground hover:bg-surface-raised hover:text-foreground",
+          "pressable h-8 gap-1.5 rounded-md px-2.5 text-xs text-muted-foreground hover:bg-surface-raised hover:text-foreground",
           className,
         )}
       >
@@ -124,20 +125,18 @@ export function TopToolbar({
 
   return (
     <TooltipProvider delayDuration={180}>
-      <header className="glass-panel relative z-10 flex h-14 shrink-0 items-center gap-1 border-b border-border/80 bg-panel/95 px-3 backdrop-blur-md">
-        <div className="mr-3 flex min-w-0 items-center gap-3">
-          <div className="flex size-8 items-center justify-center rounded-lg bg-primary/15 ring-1 ring-primary/25">
-            <span className="font-display text-[11px] font-semibold tracking-tight text-primary">PL</span>
-          </div>
+      <header className="relative z-10 flex h-12 shrink-0 items-center gap-0.5 border-b border-border/70 bg-panel/98 px-2.5 backdrop-blur-md">
+        <div className="mr-2 flex min-w-0 items-center gap-2.5 pl-0.5">
+          <BrandMark />
           <div className="min-w-0">
-            <p className="font-display truncate text-[13px] font-semibold tracking-tight text-foreground">
-              Print Layout Studio
+            <p className="font-display truncate text-[13px] font-bold tracking-tight text-brand-gradient">
+              Print Layout Pro
             </p>
             <p className="truncate text-[10px] text-muted-foreground">
-              <span className="text-foreground/80">{project.name}</span>
+              <span className="text-foreground/75">{project.name}</span>
               {lastSavedAt ? (
                 <>
-                  <span className="mx-1.5 text-border">/</span>
+                  <span className="mx-1.5 text-border">·</span>
                   <span className="inline-flex items-center gap-1.5">
                     <span className="status-pulse size-1.5 rounded-full bg-primary" />
                     saved {Math.max(0, Math.round((Date.now() - lastSavedAt) / 1000))}s ago
@@ -148,22 +147,25 @@ export function TopToolbar({
           </div>
         </div>
 
-        <Separator orientation="vertical" className="mx-1 h-6 bg-border/80" />
+        <Separator orientation="vertical" className="mx-1 h-5 bg-border/70" />
 
         <ToolBtn label="New project (Ctrl+N)" onClick={onNew}>
-          <FilePlus className="size-3.5" strokeWidth={1.75} /> New
+          <FilePlus className="size-3.5" strokeWidth={1.75} />
+          <span className="hidden lg:inline">New</span>
         </ToolBtn>
         <ToolBtn label="Open (Ctrl+O)" onClick={onOpen}>
-          <FolderOpen className="size-3.5" strokeWidth={1.75} /> Open
+          <FolderOpen className="size-3.5" strokeWidth={1.75} />
+          <span className="hidden lg:inline">Open</span>
         </ToolBtn>
         <ToolBtn label="Save (Ctrl+S)" onClick={onSave}>
-          <Save className="size-3.5" strokeWidth={1.75} /> Save
+          <Save className="size-3.5" strokeWidth={1.75} />
+          <span className="hidden lg:inline">Save</span>
         </ToolBtn>
-        <ToolBtn label="Save As (Ctrl+Shift+S)" onClick={onSaveAs}>
+        <ToolBtn label="Save As (Ctrl+Shift+S)" onClick={onSaveAs} className="hidden xl:inline-flex">
           Save As
         </ToolBtn>
 
-        <Separator orientation="vertical" className="mx-1 h-6 bg-border/80" />
+        <Separator orientation="vertical" className="mx-1 h-5 bg-border/70" />
 
         <ToolBtn label="Undo" disabled={!past.length} onClick={undo} className="size-8 px-0">
           <Undo2 className="size-3.5" strokeWidth={1.75} />
@@ -172,14 +174,14 @@ export function TopToolbar({
           <Redo2 className="size-3.5" strokeWidth={1.75} />
         </ToolBtn>
 
-        <Separator orientation="vertical" className="mx-1 h-6 bg-border/80" />
+        <Separator orientation="vertical" className="mx-1 hidden h-5 bg-border/70 sm:block" />
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
               size="sm"
               variant="ghost"
-              className="pressable h-8 gap-1.5 rounded-lg px-2.5 text-xs text-muted-foreground hover:bg-surface-raised hover:text-foreground"
+              className="pressable hidden h-8 gap-1.5 rounded-md px-2.5 text-xs text-muted-foreground hover:bg-surface-raised hover:text-foreground sm:inline-flex"
             >
               <AlignCenter className="size-3.5" strokeWidth={1.75} />
               Align
@@ -201,10 +203,10 @@ export function TopToolbar({
           className={cn(printCheckOpen && "bg-primary/15 text-primary")}
         >
           <ClipboardCheck className="size-3.5" strokeWidth={1.75} />
-          Check
+          <span className="hidden md:inline">Check</span>
         </ToolBtn>
 
-        <div className="ml-auto flex items-center gap-2">
+        <div className="ml-auto flex items-center gap-1.5">
           <ToolBtn label="Command palette (Ctrl+K)" onClick={onCommandPalette} className="size-8 px-0">
             <Command className="size-3.5" strokeWidth={1.75} />
           </ToolBtn>
@@ -215,18 +217,19 @@ export function TopToolbar({
             size="sm"
             variant="secondary"
             onClick={() => quickTwoUpA4()}
-            className="pressable h-8 rounded-lg border border-border/60 bg-surface-raised text-xs font-medium hover:bg-muted"
+            className="pressable h-8 rounded-md border border-border/50 bg-surface-raised px-2.5 text-xs font-semibold hover:bg-muted"
           >
-            2 × A4 on A3
+            2 × A4
           </Button>
           <Tip label="Print preview">
             <Button
               size="sm"
               variant="outline"
               onClick={onPreview}
-              className="pressable h-8 rounded-lg border-border/70 bg-transparent text-xs"
+              className="pressable h-8 rounded-md border-border/60 bg-transparent px-2.5 text-xs"
             >
-              <Eye className="size-3.5" strokeWidth={1.75} /> Preview
+              <Eye className="size-3.5" strokeWidth={1.75} />
+              <span className="hidden sm:inline">Preview</span>
             </Button>
           </Tip>
           <Tip label="Print">
@@ -234,7 +237,7 @@ export function TopToolbar({
               size="sm"
               variant="outline"
               onClick={onPrint}
-              className="pressable h-8 rounded-lg border-border/70 bg-transparent text-xs"
+              className="pressable hidden h-8 rounded-md border-border/60 bg-transparent px-2.5 text-xs md:inline-flex"
             >
               <Printer className="size-3.5" strokeWidth={1.75} /> Print
             </Button>
@@ -242,7 +245,7 @@ export function TopToolbar({
           <Button
             size="sm"
             onClick={onExport}
-            className="pressable h-8 rounded-lg bg-primary px-3 text-xs font-semibold text-primary-foreground shadow-[inset_0_1px_0_oklch(1_0_0/0.2)] hover:bg-primary/90"
+            className="cta-glow pressable h-8 rounded-md bg-primary px-3 text-xs font-bold text-primary-foreground hover:bg-primary/90"
           >
             <FileDown className="size-3.5" strokeWidth={1.75} /> Export PDF
           </Button>

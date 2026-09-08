@@ -32,8 +32,8 @@ export function StatusBar() {
   const q = dpi != null ? qualityOf(dpi) : null;
 
   return (
-    <footer className="glass-panel flex h-11 shrink-0 items-center gap-3 border-t border-border/80 bg-panel/95 px-3 text-[11px] text-muted-foreground backdrop-blur-md">
-      <div className="flex items-center gap-0.5">
+    <footer className="flex h-10 shrink-0 items-center gap-2 border-t border-border/70 bg-panel/98 px-2.5 text-[11px] text-muted-foreground backdrop-blur-md">
+      <div className="flex items-center gap-0.5 rounded-md border border-border/50 bg-surface/60 p-0.5">
         <Button
           size="icon"
           variant="ghost"
@@ -43,7 +43,7 @@ export function StatusBar() {
         >
           <ChevronLeft className="size-3.5" strokeWidth={1.75} />
         </Button>
-        <span className="font-mono-nums min-w-[5.75rem] text-center text-foreground/90">
+        <span className="font-mono-nums min-w-[5.25rem] text-center text-foreground/90">
           {pageIndex + 1} / {project.pages.length}
         </span>
         <Button
@@ -55,6 +55,9 @@ export function StatusBar() {
         >
           <ChevronRight className="size-3.5" strokeWidth={1.75} />
         </Button>
+      </div>
+
+      <div className="hidden items-center gap-0.5 sm:flex">
         <Button size="sm" variant="ghost" className="pressable h-7 rounded-md px-2 text-[11px]" onClick={addPage}>
           + Page
         </Button>
@@ -72,15 +75,15 @@ export function StatusBar() {
         </Button>
       </div>
 
-      <span className="hidden h-4 w-px bg-border/80 sm:block" />
+      <span className="hidden h-4 w-px bg-border/70 sm:block" />
 
-      <span className="hidden font-display tracking-tight text-foreground/80 sm:inline">
+      <span className="hidden rounded-md bg-muted/50 px-2 py-1 font-display text-[10px] font-semibold tracking-wide text-foreground/85 sm:inline">
         {doc.paper} · {doc.orientation}
       </span>
       <span className="hidden font-mono-nums md:inline">
         {doc.width} × {doc.height} mm
       </span>
-      <span className="font-mono-nums">obj {page?.objects.length ?? 0}</span>
+      <span className="font-mono-nums rounded-md bg-muted/40 px-1.5 py-0.5">obj {page?.objects.length ?? 0}</span>
 
       {obj && selectedIds.length === 1 && (
         <span className="hidden font-mono-nums text-foreground/85 xl:inline">
@@ -88,10 +91,10 @@ export function StatusBar() {
           {dpi != null && (
             <span
               className={cn(
-                "ml-2",
-                q === "good" && "text-emerald-400/90",
-                q === "warn" && "text-amber-300/90",
-                q === "bad" && "text-rose-400/90",
+                "ml-2 font-semibold",
+                q === "good" && "text-success",
+                q === "warn" && "text-warning",
+                q === "bad" && "text-destructive",
               )}
             >
               {dpi} dpi
@@ -100,7 +103,7 @@ export function StatusBar() {
         </span>
       )}
 
-      <div className="ml-auto flex items-center gap-0.5">
+      <div className="ml-auto flex items-center gap-0.5 rounded-md border border-border/50 bg-surface/60 p-0.5">
         <Button
           size="icon"
           variant="ghost"
@@ -115,7 +118,7 @@ export function StatusBar() {
             type="button"
             className={cn(
               "pressable rounded-md px-1.5 py-1 font-mono-nums text-[10px] hover:bg-surface-raised hover:text-foreground",
-              Math.abs(zoom - z) < 0.02 && "bg-primary/15 text-primary",
+              Math.abs(zoom - z) < 0.02 && "bg-primary/20 font-semibold text-primary",
             )}
             onClick={() => setState({ zoom: z })}
           >
@@ -137,14 +140,6 @@ export function StatusBar() {
           onClick={() => setState({ fitRequest: useStudio.getState().fitRequest + 1 })}
         >
           <Maximize2 className="size-3.5" strokeWidth={1.75} /> Fit
-        </Button>
-        <Button
-          size="sm"
-          variant="ghost"
-          className="pressable h-7 rounded-md px-2 text-[11px]"
-          onClick={() => setState({ zoom: 1 })}
-        >
-          100%
         </Button>
       </div>
     </footer>

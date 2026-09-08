@@ -68,9 +68,9 @@ export function ExportDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-md border-border/70 bg-card">
         <DialogHeader>
-          <DialogTitle>Export</DialogTitle>
+          <DialogTitle className="font-display text-base font-bold tracking-tight">Export print PDF</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
           <div className="space-y-1">
@@ -123,7 +123,14 @@ export function ExportDialog({
             <Label htmlFor="bg">Include background</Label>
           </div>
 
-          <div className="rounded-md border border-border bg-muted/30 p-3 text-xs">
+          <div
+            className={cn(
+              "rounded-xl border p-3 text-xs",
+              issues === 0
+                ? "border-[color-mix(in_oklab,#2dd4bf_40%,transparent)] bg-[color-mix(in_oklab,#2dd4bf_10%,transparent)]"
+                : "border-warning/30 bg-warning/8",
+            )}
+          >
             <p className="mb-2 font-semibold">
               {issues === 0 ? "Print check — ready to export" : `${issues} issue(s) found`}
             </p>
@@ -132,12 +139,12 @@ export function ExportDialog({
                 <li
                   key={c.id}
                   className={cn(
-                    c.level === "ok" && "text-emerald-400",
-                    c.level === "warn" && "text-amber-400",
-                    c.level === "error" && "text-red-400",
+                    c.level === "ok" && "text-success",
+                    c.level === "warn" && "text-warning",
+                    c.level === "error" && "text-destructive",
                   )}
                 >
-                  {c.level === "ok" ? "[ok]" : "[!]"} {c.message}
+                  {c.level === "ok" ? "OK" : "!"} {c.message}
                 </li>
               ))}
             </ul>
@@ -159,7 +166,7 @@ export function ExportDialog({
                 Export anyway
               </Button>
             ) : (
-              <Button disabled={busy} onClick={() => void runExport("pdf")}>
+              <Button className="cta-glow font-bold" disabled={busy} onClick={() => void runExport("pdf")}>
                 {busy ? "Exporting…" : "Export PDF"}
               </Button>
             )}

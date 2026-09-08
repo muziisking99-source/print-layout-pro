@@ -182,7 +182,7 @@ export function ImageLibrary() {
       </div>
 
       <div
-        className="rounded-xl border border-dashed border-border/80 bg-surface/60 px-3 py-5 text-center transition-colors duration-300 hover:border-primary/35 hover:bg-primary/[0.04]"
+        className="rounded-xl border border-dashed border-border/70 bg-[linear-gradient(180deg,color-mix(in_oklab,var(--color-primary)_6%,transparent),transparent)] px-3 py-5 text-center transition-colors duration-200 hover:border-primary/40 hover:bg-primary/[0.06]"
         onDragOver={(e) => e.preventDefault()}
         onDrop={(e) => {
           e.preventDefault();
@@ -276,7 +276,7 @@ export function ImageLibrary() {
                 onDoubleClick={() => placeAsset(asset.id)}
                 className={cn(
                   "group pressable flex cursor-grab items-center gap-2.5 rounded-xl border bg-surface/50 p-2 transition-colors hover:bg-surface-raised active:cursor-grabbing",
-                  isSelected ? "border-primary/50 bg-primary/[0.08]" : "border-transparent hover:border-border",
+                  isSelected ? "border-primary/50 bg-primary/[0.1] shadow-[inset_0_0_0_1px_color-mix(in_oklab,var(--color-primary)_15%,transparent)]" : "border-transparent hover:border-border",
                 )}
               >
                 <Checkbox
@@ -297,7 +297,7 @@ export function ImageLibrary() {
                   <p className="font-mono-nums text-[10px] text-muted-foreground">
                     {asset.naturalWidth}×{asset.naturalHeight} · {formatBytes(asset.fileSize)}
                     {(q === "warn" || q === "bad") && (
-                      <span className={cn("ml-1", q === "bad" ? "text-rose-400" : "text-amber-300")}>
+                      <span className={cn("ml-1", q === "bad" ? "text-destructive" : "text-warning")}>
                         · {dpi} DPI
                       </span>
                     )}

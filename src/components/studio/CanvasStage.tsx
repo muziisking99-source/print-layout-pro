@@ -487,10 +487,10 @@ export function CanvasStage() {
             })}
 
             {snapLines.v.map((v, i) => (
-              <div key={`sv${i}`} className="pointer-events-none absolute top-0 h-full w-px bg-fuchsia-500" style={{ left: v * scale }} />
+              <div key={`sv${i}`} className="pointer-events-none absolute top-0 h-full w-px bg-sky-400" style={{ left: v * scale }} />
             ))}
             {snapLines.h.map((h, i) => (
-              <div key={`sh${i}`} className="pointer-events-none absolute left-0 w-full border-t border-fuchsia-500" style={{ top: h * scale }} />
+              <div key={`sh${i}`} className="pointer-events-none absolute left-0 w-full border-t border-sky-400" style={{ top: h * scale }} />
             ))}
           </div>
         </div>

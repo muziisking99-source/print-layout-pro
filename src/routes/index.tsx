@@ -5,7 +5,7 @@ export const Route = createFileRoute("/")({
   component: Index,
   head: () => ({
     meta: [
-      { title: "Print Layout Studio" },
+      { title: "Print Layout Pro" },
       {
         name: "description",
         content: "Arrange images on printable paper sizes and export print-ready PDFs.",

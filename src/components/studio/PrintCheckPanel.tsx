@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { CheckCircle2, AlertTriangle, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
@@ -35,7 +36,14 @@ export function PrintCheckPanel() {
   };
 
   return (
-    <div className="space-y-3 rounded-xl border border-border/70 bg-surface/70 p-3">
+    <div
+      className={cn(
+        "space-y-3 rounded-xl border p-3",
+        issues === 0
+          ? "border-[color-mix(in_oklab,#2dd4bf_45%,transparent)] bg-[color-mix(in_oklab,#2dd4bf_10%,transparent)]"
+          : "border-warning/35 bg-warning/8",
+      )}
+    >
       <div className="flex items-center justify-between gap-2">
         <PanelHeading>Print check</PanelHeading>
         <Button
@@ -47,9 +55,16 @@ export function PrintCheckPanel() {
           Close
         </Button>
       </div>
-      <p className="text-[11px] text-muted-foreground">
-        {issues === 0 ? "Ready to export" : `${issues} issue(s) to review`}
-      </p>
+      <div className="flex items-center gap-2">
+        {issues === 0 ? (
+          <CheckCircle2 className="size-4 text-success" strokeWidth={1.75} aria-hidden />
+        ) : (
+          <AlertTriangle className="size-4 text-warning" strokeWidth={1.75} aria-hidden />
+        )}
+        <p className="text-[12px] font-semibold text-foreground">
+          {issues === 0 ? "Ready to export" : `${issues} issue(s) to review`}
+        </p>
+      </div>
       <ul className="max-h-40 space-y-1 overflow-auto text-[11px]">
         {checks.map((c) => {
           const jumpable = /^(?:out|dpi)-/.test(c.id);
@@ -60,14 +75,21 @@ export function PrintCheckPanel() {
                 disabled={!jumpable}
                 onClick={() => jumpTo(c.id)}
                 className={cn(
-                  "w-full text-left",
-                  jumpable && "underline-offset-2 hover:underline",
-                  c.level === "ok" && "text-emerald-400/90",
-                  c.level === "warn" && "text-amber-300/90",
-                  c.level === "error" && "text-rose-400/90",
+                  "flex w-full items-start gap-1.5 text-left",
+                  jumpable && "cursor-pointer underline-offset-2 hover:underline",
+                  c.level === "ok" && "text-success",
+                  c.level === "warn" && "text-warning",
+                  c.level === "error" && "text-destructive",
                 )}
               >
-                {c.level === "ok" ? "[ok]" : "[!]"} {c.message}
+                {c.level === "ok" ? (
+                  <CheckCircle2 className="mt-0.5 size-3 shrink-0" strokeWidth={2} aria-hidden />
+                ) : c.level === "warn" ? (
+                  <AlertTriangle className="mt-0.5 size-3 shrink-0" strokeWidth={2} aria-hidden />
+                ) : (
+                  <XCircle className="mt-0.5 size-3 shrink-0" strokeWidth={2} aria-hidden />
+                )}
+                <span>{c.message}</span>
               </button>
             </li>
           );
@@ -105,7 +127,7 @@ export function PrintCheckPanel() {
       </div>
       <Button
         size="sm"
-        className="h-8 w-full text-[11px]"
+        className="cta-glow h-8 w-full text-[11px] font-bold"
         onClick={() => window.dispatchEvent(new CustomEvent("pls-open-export"))}
       >
         {issues > 0 ? "Export anyway…" : "Export…"}
